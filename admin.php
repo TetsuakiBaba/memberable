@@ -21,6 +21,7 @@ try {
     // ユーザー情報の更新
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_user'])) {
         $user_id = $_POST['user_id'];
+        $member_id = $_POST['member_id'];
         $name = $_POST['name'];
         $affiliation = $_POST['affiliation'];
         $position = $_POST['position'];
@@ -48,11 +49,21 @@ try {
             }
         }
 
+        // member_idの重複チェック
+        $stmt = $db->prepare("SELECT id FROM users WHERE member_id = ? AND id != ?");
+        $stmt->execute([$member_id, $user_id]);
+        $existing_member = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($existing_member) {
+            $message = 'The Member ID is already in use by another account.';
+        }
+
         // エラーメッセージがない場合に更新を実行
         if (!$message) {
             // ユーザー情報の更新クエリ
-            $sql = "UPDATE users SET name = :name, affiliation = :affiliation, position = :position, nationality = :nationality, is_admin = :is_admin $password_sql WHERE id = :user_id";
+            $sql = "UPDATE users SET member_id = :member_id, name = :name, affiliation = :affiliation, position = :position, nationality = :nationality, is_admin = :is_admin $password_sql WHERE id = :user_id";
             $stmt = $db->prepare($sql);
+            $stmt->bindParam(':member_id', $member_id);
             $stmt->bindParam(':name', $name);
             $stmt->bindParam(':affiliation', $affiliation);
             $stmt->bindParam(':position', $position);
@@ -129,8 +140,7 @@ try {
     <meta charset="UTF-8">
     <title>Admin Page</title>
     <!-- BootstrapのCSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
@@ -166,14 +176,23 @@ try {
                 <?php foreach ($users as $user): ?>
                     <tr>
                         <form method="post">
-                            <td><?php echo htmlspecialchars($user['member_id']); ?></td>
+                            <!-- Member ID -->
+                            <td><input class="form-control" type="text" name="member_id" value="<?php echo htmlspecialchars($user['member_id']); ?>"></td>
+                            <!-- Email -->
                             <td><?php echo htmlspecialchars($user['email']); ?></td>
+                            <!-- Name -->
                             <td><input class="form-control" type="text" name="name" value="<?php echo htmlspecialchars($user['name']); ?>"></td>
+                            <!-- Affiliation -->
                             <td><input class="form-control" type="text" name="affiliation" value="<?php echo htmlspecialchars($user['affiliation']); ?>"></td>
+                            <!-- Position -->
                             <td><input class="form-control" type="text" name="position" value="<?php echo htmlspecialchars($user['position']); ?>"></td>
+                            <!-- Nationality -->
                             <td><input class="form-control" type="text" name="nationality" value="<?php echo htmlspecialchars($user['nationality']); ?>"></td>
-                            <td><input class="form-check-input" type="checkbox" name="is_admin" <?php if ($user['is_admin']) echo 'checked'; ?>></td>
-                            <td><input class="form-control" type="password" name="new_password" class="form-control password-input" placeholder="New Password"></td>
+                            <!-- Admin -->
+                            <td class="text-center"><input class="form-check-input" type="checkbox" name="is_admin" <?php if ($user['is_admin']) echo 'checked'; ?>></td>
+                            <!-- New Password -->
+                            <td><input class="form-control password-input" type="password" name="new_password" placeholder="New Password"></td>
+                            <!-- Actions -->
                             <td>
                                 <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
                                 <button type="submit" name="update_user" class="btn btn-primary btn-sm"><i class="bi bi-floppy"></i></button>
@@ -205,9 +224,8 @@ try {
         <p class="mt-3"><a href="dashboard.php">Back to Dashboard</a></p>
     </div>
 
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
+    <!-- BootstrapのJS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

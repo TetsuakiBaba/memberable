@@ -21,15 +21,29 @@ try {
 
 // プロフィールの更新
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_profile'])) {
+    $email = $_POST['email'];
     $name = $_POST['name'];
     $affiliation = $_POST['affiliation'];
     $position = $_POST['position'];
     $nationality = $_POST['nationality'];
 
     try {
-        $stmt = $db->prepare("UPDATE users SET name = ?, affiliation = ?, position = ?, nationality = ? WHERE id = ?");
-        $stmt->execute([$name, $affiliation, $position, $nationality, $_SESSION['user_id']]);
-        $message = 'Profile updated.';
+        // Emailの重複チェック
+        $stmt = $db->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+        $stmt->execute([$email, $_SESSION['user_id']]);
+        $existing_user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($existing_user) {
+            $message = 'The email address is already in use by another account.';
+        } else {
+            $stmt = $db->prepare("UPDATE users SET email = ?, name = ?, affiliation = ?, position = ?, nationality = ? WHERE id = ?");
+            $stmt->execute([$email, $name, $affiliation, $position, $nationality, $_SESSION['user_id']]);
+
+            // セッション内のメールアドレスを更新
+            $_SESSION['email'] = $email;
+
+            $message = 'Profile updated.';
+        }
     } catch (Exception $e) {
         $message = 'Error: ' . $e->getMessage();
     }
@@ -114,7 +128,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
                     Logout <i class="bi bi-door-closed"></i>
                 </button>
             </a>
-
         </div>
     </nav>
     <div class="container mt-5">
@@ -128,8 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
             <a href="admin.php"><button class="btn btn-warning mb-3"><i class="bi bi-shield-lock"></i> Go to Admin Page</button></a>
         <?php endif; ?>
 
-
-
         <!-- ユーザー情報の表示と更新 -->
         <div class="text-center text-muted mb-3">
             <i class="bi bi-person-circle" style="font-size:10rem;line-height:0px;"></i><br>
@@ -142,33 +153,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
             <div class="card-body">
                 <form method="post">
                     <!-- Member ID -->
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label>Member ID</label>
                         <input type="text" name="member_id" class="form-control" value="<?php echo htmlspecialchars($user['member_id']); ?>" disabled>
                     </div>
+                    <!-- Email Address -->
+                    <div class="form-group mb-3">
+                        <label>Email Address</label>
+                        <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+                    </div>
                     <!-- Name -->
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label>Name</label>
                         <input type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($user['name']); ?>" required>
                     </div>
                     <!-- Affiliation -->
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label>Affiliation</label>
                         <input type="text" name="affiliation" class="form-control" value="<?php echo htmlspecialchars($user['affiliation']); ?>" required>
                     </div>
                     <!-- Position -->
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label>Position</label>
                         <input type="text" name="position" class="form-control" value="<?php echo htmlspecialchars($user['position']); ?>" required>
                     </div>
                     <!-- Nationality -->
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label>Nationality</label>
-                        <input type="text" name="nationality" class="form-control mb-3" value="<?php echo htmlspecialchars($user['nationality']); ?>" required>
+                        <input type="text" name="nationality" class="form-control" value="<?php echo htmlspecialchars($user['nationality']); ?>" required>
                     </div>
                     <!-- Update Button -->
                     <button type="submit" name="update_profile" class="btn btn-primary">Update Profile</button>
-
                 </form>
             </div>
         </div>
@@ -180,12 +195,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
             <div class="card-body">
                 <form method="post">
                     <!-- Current Password -->
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label>Current Password</label>
                         <input type="password" name="current_password" class="form-control" required>
                     </div>
                     <!-- New Password -->
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label>New Password</label>
                         <input type="password" name="new_password" class="form-control" required>
                         <small class="form-text text-muted">At least 8 characters, including letters, numbers, and symbols.</small>
@@ -201,17 +216,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
             <h5>Danger Zone</h5>
             <p>If you wish to unsubscribe from this membership, please delete your account. This action cannot be undone, and you must register a new account in order to rejoin the membership.</p>
 
-            <div class="form-check">
+            <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" onclick="toggleDeleteButton(this);">
                 <label class="form-check-label" for="flexCheckDefault">
-                    I understand the above and will process your membership withdrawal.
+                    I understand the above and will proceed with membership withdrawal.
                 </label>
-                <script>
-                    function toggleDeleteButton(e) {
-                        const deleteButton = document.querySelector('button[name="delete_account"]');
-                        deleteButton.disabled = !e.checked;
-                    }
-                </script>
             </div>
 
             <form method="post" onsubmit="return confirm('Are you sure you want to delete your account?');">
@@ -225,6 +234,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
         </footer>
     </div>
 
+    <script>
+        function toggleDeleteButton(e) {
+            const deleteButton = document.querySelector('button[name="delete_account"]');
+            deleteButton.disabled = !e.checked;
+        }
+    </script>
 </body>
 
 </html>
