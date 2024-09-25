@@ -43,7 +43,7 @@ try {
 
         // member_idの生成
         $current_year = date('Y');
-        $member_id = 'adada' . $current_year . str_pad($user_id, 4, '0', STR_PAD_LEFT);
+        $member_id = MEMBER_ID_HEADER . $current_year . str_pad($user_id, 4, '0', STR_PAD_LEFT);
 
         // member_idの更新
         $stmt = $db->prepare("UPDATE users SET member_id = ? WHERE id = ?");

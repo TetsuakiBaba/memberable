@@ -13,3 +13,6 @@ define('ADMIN_EMAIL', 'admin@example.com'); // 実際のメールアドレスに
 
 // admin initial password
 define('ADMIN_PASSWORD', 'Admin@1234'); // 管理者の初期パスワード
+
+// header of member_id
+define('MEMBER_ID_HEADER', 'mymember'); // メンバーIDの先頭に付与する文字列

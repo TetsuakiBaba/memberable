@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
     <nav class="navbar bg-body-tertiary">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <img src="https://adada.info/cache/images/cached_ef3b881b9775c9e599b094ec32380d7a.png" alt="Logo" height="36" class="d-inline-block align-text-top">
+                <img src="" alt="Logo" height="36" class="d-inline-block align-text-top">
             </a>
             <!-- Logout -->
             <a href="logout.php">
@@ -129,9 +129,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
         <?php endif; ?>
 
 
-        <!-- ユーザー情報の表示と更新 -->
-        <div class="card mb-3">
 
+        <!-- ユーザー情報の表示と更新 -->
+        <div class="text-center text-muted mb-3">
+            <i class="bi bi-person-circle" style="font-size:10rem;line-height:0px;"></i><br>
+            <span class="fs-3"><?php echo htmlspecialchars($user['name']); ?></span>
+        </div>
+        <div class="card mb-3">
             <h5 class="card-header">
                 Profile
             </h5>
