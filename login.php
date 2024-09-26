@@ -36,7 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title><?php echo LOGIN_TITLE; ?></title>
     <!-- BootstrapのCSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <!-- Bootstrap Icons -->
@@ -45,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
     <div class="container">
-        <h2 class="mt-5">Login</h2>
+        <h2 class="mt-5 mb-4"><?php echo LOGIN_TITLE; ?></h2>
         <?php if ($message): ?>
             <div class="alert alert-danger"><?php echo htmlspecialchars($message); ?></div>
         <?php endif; ?>
@@ -68,6 +70,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
 
         <button class="btn btn-danger" onclick="location.href='register.php'">Create a new account</button>
+
+        <hr>
+        <footer>
+            <p class="text-center text-muted small"><?php echo FOOTER_TEXT; ?></p>
+        </footer>
     </div>
 </body>
 

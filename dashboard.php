@@ -108,6 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard</title>
     <!-- BootstrapのCSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -120,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
     <nav class="navbar bg-body-tertiary">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <img src="" alt="Logo" height="36" class="d-inline-block align-text-top">
+                <img src="<?php echo HEADER_LOGO; ?>" alt="Logo" height="36" class="d-inline-block align-text-top">
             </a>
             <!-- Logout -->
             <a href="logout.php">
@@ -130,15 +131,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
             </a>
         </div>
     </nav>
-    <div class="container mt-5">
+    <div class="container mt-4">
         <?php if ($message): ?>
             <div class="alert alert-info"><?php echo htmlspecialchars($message); ?></div>
         <?php endif; ?>
 
         <!-- 管理者用機能 -->
         <?php if ($_SESSION['is_admin']): ?>
-            <hr>
-            <a href="admin.php"><button class="btn btn-warning mb-3"><i class="bi bi-shield-lock"></i> Go to Admin Page</button></a>
+            <a href="admin.php"><button class="btn btn-outline-primary mb-3"><i class="bi bi-shield-lock"></i> Go to Admin Page</button></a>
         <?php endif; ?>
 
         <!-- ユーザー情報の表示と更新 -->
@@ -230,7 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
 
         <hr>
         <footer>
-            <p class="text-center text-muted small">&copy; 2024 memberable by Tetsuaki BABA</p>
+            <p class="text-center text-muted small"><?php echo FOOTER_TEXT; ?></p>
         </footer>
     </div>
 
@@ -240,6 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
             deleteButton.disabled = !e.checked;
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/gh/TetsuakiBaba/placeholderable@main/placeholderable.js" crossorigin="anonymous" type="text/javascript"></script>
 </body>
 
 </html>

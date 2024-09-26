@@ -16,3 +16,15 @@ define('ADMIN_PASSWORD', 'Admin@1234'); // 管理者の初期パスワード
 
 // header of member_id
 define('MEMBER_ID_HEADER', 'mymember'); // メンバーIDの先頭に付与する文字列
+
+// title of login.php
+define('LOGIN_TITLE', 'my Login'); // ログインページのタイトル
+
+// header logo image path
+define('HEADER_LOGO', ' ?icon=F4D7'); // ヘッダーに表示するロゴ画像のパス
+
+// footer of page
+define('FOOTER_TEXT', '&copy; 2024 Your Company'); // フッターに表示するテキスト
+
+// agree text
+define('AGREE_TEXT', 'I understand that by creating an account, I am joining the member. The personal information entered herein shall be used solely for the academic development and will not be provided to any third party without his/her consent.'); // 利用規約に同意する文言
