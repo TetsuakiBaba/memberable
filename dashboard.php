@@ -142,96 +142,129 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
         <?php endif; ?>
 
         <!-- ユーザー情報の表示と更新 -->
-        <div class="text-center text-muted mb-3">
-            <i class="bi bi-person-circle" style="font-size:10rem;line-height:0px;"></i><br>
-            <span class="fs-3"><?php echo htmlspecialchars($user['name']); ?></span>
-        </div>
-        <div class="card mb-3">
-            <h5 class="card-header">
-                Profile
-            </h5>
-            <div class="card-body">
-                <form method="post">
-                    <!-- Member ID -->
-                    <div class="form-group mb-3">
-                        <label>Member ID</label>
-                        <input type="text" name="member_id" class="form-control" value="<?php echo htmlspecialchars($user['member_id']); ?>" disabled>
-                    </div>
-                    <!-- Email Address -->
-                    <div class="form-group mb-3">
-                        <label>Email Address</label>
-                        <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($user['email']); ?>" required>
-                    </div>
-                    <!-- Name -->
-                    <div class="form-group mb-3">
-                        <label>Name</label>
-                        <input type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($user['name']); ?>" required>
-                    </div>
-                    <!-- Affiliation -->
-                    <div class="form-group mb-3">
-                        <label>Affiliation</label>
-                        <input type="text" name="affiliation" class="form-control" value="<?php echo htmlspecialchars($user['affiliation']); ?>" required>
-                    </div>
-                    <!-- Position -->
-                    <div class="form-group mb-3">
-                        <label>Position</label>
-                        <input type="text" name="position" class="form-control" value="<?php echo htmlspecialchars($user['position']); ?>" required>
-                    </div>
-                    <!-- Nationality -->
-                    <div class="form-group mb-3">
-                        <label>Nationality</label>
-                        <input type="text" name="nationality" class="form-control" value="<?php echo htmlspecialchars($user['nationality']); ?>" required>
-                    </div>
-                    <!-- Update Button -->
-                    <button type="submit" name="update_profile" class="btn btn-primary">Update Profile</button>
-                </form>
-            </div>
-        </div>
-        <!-- パスワード変更 -->
-        <div class="card mb-3">
-            <h5 class="card-header">
-                Change Password
-            </h5>
-            <div class="card-body">
-                <form method="post">
-                    <!-- Current Password -->
-                    <div class="form-group mb-3">
-                        <label>Current Password</label>
-                        <input type="password" name="current_password" class="form-control" required>
-                    </div>
-                    <!-- New Password -->
-                    <div class="form-group mb-3">
-                        <label>New Password</label>
-                        <input type="password" name="new_password" class="form-control" required>
-                        <small class="form-text text-muted">At least 8 characters, including letters, numbers, and symbols.</small>
-                    </div>
-                    <!-- Change Password Button -->
-                    <button type="submit" name="change_password" class="btn btn-primary">Change Password</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Account Deletion -->
-        <div class="alert alert-danger" role="alert">
-            <h5>Danger Zone</h5>
-            <p>If you wish to unsubscribe from this membership, please delete your account. This action cannot be undone, and you must register a new account in order to rejoin the membership.</p>
-
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" onclick="toggleDeleteButton(this);">
-                <label class="form-check-label" for="flexCheckDefault">
-                    I understand the above and will proceed with membership withdrawal.
-                </label>
+        <div class="row" data-masonry='{"percentPosition": false }'>
+            <div class="col-12">
+                <div class="text-center text-muted mb-3">
+                    <i class="bi bi-person-circle" style="font-size:10rem;line-height:0px;"></i><br>
+                    <span class="fs-3"><?php echo htmlspecialchars($user['name']); ?></span>
+                </div>
             </div>
 
-            <form method="post" onsubmit="return confirm('Are you sure you want to delete your account?');">
-                <button type="submit" name="delete_account" class="btn btn-danger form-control" disabled>Delete Account</button>
-            </form>
         </div>
 
-        <hr>
-        <footer>
-            <p class="text-center text-muted small"><?php echo FOOTER_TEXT; ?></p>
-        </footer>
+        <!-- もし MEMBERSHIP_SERVICESが定義されていれば -->
+        <?php if (defined('MEMBERSHIP_SERVICES')) {
+
+
+        ?>
+            <div class="row" data-masonry='{"percentPosition": true }'>
+                <div class="col-sm-12 col-md-12 col-lg-6 mb-3">
+                    <div class="card">
+                        <h5 class="card-header">
+                            Membership Service
+                        </h5>
+                        <div class="card-body">
+                            <ul class="list-group">
+                            <?php
+                            // serviceの数だけforeachでループ処理
+                            foreach (MEMBERSHIP_SERVICES as $service) {
+                                echo '<li class="list-group-item d-flex justify-content-between align-items-start"><div class="ms-2 me-auto"><div class="fw-bold">' . $service['title'] . '</div>' . $service['description'] . '</div><span class="fs-5 badge rounded-pill"><a href="' . $service['link'] . '" target="_blank"><i class="bi bi-box-arrow-up-right"></i></a></span></li>';
+                            }
+                        } ?>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6">
+                    <div class="card mb-3">
+                        <h5 class="card-header">
+                            Profile
+                        </h5>
+                        <div class="card-body">
+                            <form method="post">
+                                <!-- Member ID -->
+                                <div class="form-group mb-3">
+                                    <label>Member ID</label>
+                                    <input type="text" name="member_id" class="form-control" value="<?php echo htmlspecialchars($user['member_id']); ?>" disabled>
+                                </div>
+                                <!-- Email Address -->
+                                <div class="form-group mb-3">
+                                    <label>Email Address</label>
+                                    <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+                                </div>
+                                <!-- Name -->
+                                <div class="form-group mb-3">
+                                    <label>Name</label>
+                                    <input type="text" name="name" class="form-control" value="<?php echo htmlspecialchars($user['name']); ?>" required>
+                                </div>
+                                <!-- Affiliation -->
+                                <div class="form-group mb-3">
+                                    <label>Affiliation</label>
+                                    <input type="text" name="affiliation" class="form-control" value="<?php echo htmlspecialchars($user['affiliation']); ?>" required>
+                                </div>
+                                <!-- Position -->
+                                <div class="form-group mb-3">
+                                    <label>Position</label>
+                                    <input type="text" name="position" class="form-control" value="<?php echo htmlspecialchars($user['position']); ?>" required>
+                                </div>
+                                <!-- Nationality -->
+                                <div class="form-group mb-3">
+                                    <label>Nationality</label>
+                                    <input type="text" name="nationality" class="form-control" value="<?php echo htmlspecialchars($user['nationality']); ?>" required>
+                                </div>
+                                <!-- Update Button -->
+                                <button type="submit" name="update_profile" class="btn btn-primary">Update Profile</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6">
+                    <!-- パスワード変更 -->
+                    <div class="card mb-3">
+                        <h5 class="card-header">
+                            Change Password
+                        </h5>
+                        <div class="card-body">
+                            <form method="post">
+                                <!-- Current Password -->
+                                <div class="form-group mb-3">
+                                    <label>Current Password</label>
+                                    <input type="password" name="current_password" class="form-control" required>
+                                </div>
+                                <!-- New Password -->
+                                <div class="form-group mb-3">
+                                    <label>New Password</label>
+                                    <input type="password" name="new_password" class="form-control" required>
+                                    <small class="form-text text-muted">At least 8 characters, including letters, numbers, and symbols.</small>
+                                </div>
+                                <!-- Change Password Button -->
+                                <button type="submit" name="change_password" class="btn btn-primary">Change Password</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- アカウント削除 -->
+                    <div class="alert alert-danger" role="alert">
+                        <h5>Danger Zone</h5>
+                        <p>If you wish to unsubscribe from this membership, please delete your account. This action cannot be undone, and you must register a new account in order to rejoin the membership.</p>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" onclick="toggleDeleteButton(this);">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                I understand the above and will proceed with membership withdrawal.
+                            </label>
+                        </div>
+
+                        <form method="post" onsubmit="return confirm(' Are you sure you want to delete your account?');">
+                            <button type="submit" name="delete_account" class="btn btn-danger form-control" disabled>Delete Account</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <footer>
+                <p class="text-center text-muted small"><?php echo FOOTER_TEXT; ?></p>
+            </footer>
     </div>
 
     <script>
@@ -241,6 +274,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
         }
     </script>
     <script src="https://cdn.jsdelivr.net/gh/TetsuakiBaba/placeholderable@main/placeholderable.js" crossorigin="anonymous" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
+
 </body>
 
 </html>

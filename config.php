@@ -28,3 +28,17 @@ define('FOOTER_TEXT', '&copy; 2024 Your Company'); // フッターに表示す�
 
 // agree text
 define('AGREE_TEXT', 'I understand that by creating an account, I am joining the member. The personal information entered herein shall be used solely for the academic development and will not be provided to any third party without his/her consent.'); // 利用規約に同意する文言
+
+// membership services
+define('MEMBERSHIP_SERVICES', [
+    [
+        'title' => '<i class="bi bi-envelope"></i> Email Support',
+        'description' => 'If you have any questions about ADADA, please contact us directly at this email address.',
+        'link' => 'mailto:office@example.com?subject=Inquiry',
+    ],
+    [
+        'title' => '<i class="bi bi-postcard"></i> Membership Certificate',
+        'description' => 'You can download a certificate of membership in PNG format.',
+        'link' => 'certificate.php',
+    ],
+]); // メンバーシップサービス

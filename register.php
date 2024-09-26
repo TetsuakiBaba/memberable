@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
     <div class="container-sm">
-        <div class="row ms-4 me-4 mb-3">
+        <div class="row mb-3">
             <img class="mt-5 mb-2" src="<?php echo HEADER_LOGO; ?>" style="width:auto;height:36px;">
             <h2 class="display-5">
                 Account Registration

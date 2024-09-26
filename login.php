@@ -19,6 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // セッションにユーザー情報を保存
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['is_admin'] = $user['is_admin'];
+            $_SESSION['name'] = $user['name'];
+            $_SESSION['member_id'] = $user['member_id'];
+            $_SESSION['affiliation'] = $user['affiliation'];
+            $_SESSION['nationality'] = $user['nationality'];
             header('Location: dashboard.php');
             exit();
         } else {
