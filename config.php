@@ -29,6 +29,11 @@ define('FOOTER_TEXT', '&copy; 2024 Your Company'); // フッターに表示す�
 // agree text
 define('AGREE_TEXT', 'I understand that by creating an account, I am joining the member. The personal information entered herein shall be used solely for the academic development and will not be provided to any third party without his/her consent.'); // 利用規約に同意する文言
 
+// 組織名
+define('ASSOCIATION_NAME', 'Association name'); // 組織名
+
+
+
 // membership services
 define('MEMBERSHIP_SERVICES', [
     [

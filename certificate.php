@@ -29,11 +29,15 @@ if (!isset($_SESSION['user_id'])) {
         body {
             font-family: 'Libre Baskerville', serif;
             background-color: #f5f5f5;
+
+            margin: 0;
+        }
+
+        .container-certificate {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
         }
 
         .certificate {
@@ -43,6 +47,7 @@ if (!isset($_SESSION['user_id'])) {
             border: 15px solid #394C87;
             background-image: url('');
             /* 背景画像 */
+            background-color: #fff;
             background-size: cover;
             background-position: center;
             text-align: center;
@@ -133,39 +138,32 @@ if (!isset($_SESSION['user_id'])) {
 </head>
 
 <body>
-
-    <div class="container-fluid">
-        <div class="row mb-3">
-            <div class="col-12">
-                <button class="btn btn-outline-dark" id="download-btn">Download as PNG</button>
+    <div class="text-center mt-4">
+        <button class="btn btn-outline-dark" id="download-btn">Download as PNG</button>
+    </div>
+    <div class="container-certificate">
+        <div class="certificate">
+            <!-- シール画像 -->
+            <div class="seal">
+                <img src=" ?text=LOGO&bgcolors=#394C87" alt="Seal">
             </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="certificate">
-                    <!-- シール画像 -->
-                    <div class="seal">
-                        <img src=" ?text=LOGO&bgcolors=#394C87" alt="Seal">
-                    </div>
-                    <h1 style="margin-top:20%; margin-bottom:4rem;">CERTIFICATE OF MEMBERSHIP</h1>
-                    <p>ADADA International</p>
-                    <p>We hereby present this to certify that</p>
-                    <p class="name">Tetsuaki Baba</p>
-                    <p>is a recognized member of the association</p>
-                    <div class="member_id">
-                        <p>Member ID: <?php echo $_SESSION['member_id']; ?></p>
-                    </div>
+            <h1 style="margin-top:20%; margin-bottom:4rem;">CERTIFICATE OF MEMBERSHIP</h1>
+            <p><?php echo ASSOCIATION_NAME; ?></p>
+            <p>We hereby present this to certify that</p>
+            <p class="name">Tetsuaki Baba</p>
+            <p>is a <?php echo $_SESSION['grade'] ?> member of the association</p>
+            <div class="member_id">
+                <p>Member ID: <?php echo $_SESSION['member_id']; ?></p>
+            </div>
 
-                    <div class="date">
-                        <p>Date Issued: <?php echo date('F j, Y');  ?> </p>
+            <div class="date">
+                <p>Date Issued: <?php echo date('F j, Y');  ?> </p>
 
-                    </div>
+            </div>
 
-                    <div class="signature">
-                        <img src=" ?text=signature image dummy&bgcolors=#394C87" alt="Signature">
-                        <p>Authorized Signature</p>
-                    </div>
-                </div>
+            <div class="signature">
+                <img src=" ?text=signature image dummy&bgcolors=#394C87" alt="Signature">
+                <p>Authorized Signature</p>
             </div>
         </div>
     </div>

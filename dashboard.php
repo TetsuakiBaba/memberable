@@ -187,6 +187,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['promote_user']) && $_S
                                     <label>Member ID</label>
                                     <input type="text" name="member_id" class="form-control" value="<?php echo htmlspecialchars($user['member_id']); ?>" disabled>
                                 </div>
+                                <!-- Member grade -->
+                                <div class="form-group mb-3">
+                                    <label>Grade</label>
+                                    <input type="text" name="grade" class="form-control" value="<?php echo htmlspecialchars($user['grade']); ?>" disabled>
+                                </div>
                                 <!-- Email Address -->
                                 <div class="form-group mb-3">
                                     <label>Email Address</label>

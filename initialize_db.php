@@ -8,13 +8,15 @@ try {
     // ユーザーテーブルの作成
     $db->exec("CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        created_at TEXT DEFAULT (DATETIME('now', 'localtime')),
+        member_id TEXT UNIQUE,
+        grade TEXT,
         email TEXT UNIQUE,
         password TEXT,
         name TEXT,
         affiliation TEXT,
         position TEXT,
         nationality TEXT,
-        member_id TEXT UNIQUE,
         is_admin INTEGER DEFAULT 0,
         reset_token TEXT,
         reset_token_expire INTEGER
@@ -37,8 +39,8 @@ try {
 
     if (!$admin_exists) {
         // 一時的にユーザーを追加してIDを取得
-        $stmt = $db->prepare("INSERT INTO users (email, password, name, affiliation, position, nationality, is_admin) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$email, $hashed_password, $name, $affiliation, $position, $nationality, $is_admin]);
+        $stmt = $db->prepare("INSERT INTO users (email, password, name, affiliation, position, nationality, is_admin, grade) VALUES (?, ?, ?, ?, ?, ?, ?,?)");
+        $stmt->execute([$email, $hashed_password, $name, $affiliation, $position, $nationality, $is_admin, 'admin']);
         $user_id = $db->lastInsertId();
 
         // member_idの生成

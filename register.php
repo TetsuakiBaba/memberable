@@ -28,20 +28,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $db = new PDO('sqlite:' . DB_PATH);
 
             // ユーザーの挿入
-            $stmt = $db->prepare("INSERT INTO users (email, password, name, affiliation, position, nationality) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$email, $hashed_password, $name, $affiliation, $position, $nationality]);
+            $stmt = $db->prepare("INSERT INTO users (email, password, name, affiliation, position, nationality,grade) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$email, $hashed_password, $name, $affiliation, $position, $nationality, 'Regular']);
 
             // ユーザーIDの取得
             $user_id = $db->lastInsertId();
 
             // member_idの生成
             $current_year = date('Y');
-            $member_id = 'adada' . $current_year . str_pad($user_id, 4, '0', STR_PAD_LEFT);
+            do {
+                // 4桁のランダムな数字を生成
+                $random_digits = str_pad(mt_rand(0, 9999), 4, '0', STR_PAD_LEFT);
+                $member_id = MEMBER_ID_HEADER . $current_year . $random_digits;
+
+                // 既に同じmember_idが存在しないか確認
+                $stmt = $db->prepare("SELECT COUNT(*) FROM users WHERE member_id = ?");
+                $stmt->execute([$member_id]);
+                $count = $stmt->fetchColumn();
+            } while ($count > 0);
 
             // member_idの更新
             $stmt = $db->prepare("UPDATE users SET member_id = ? WHERE id = ?");
             $stmt->execute([$member_id, $user_id]);
-
             $message = 'Registration completed. Please log in <a href="./login.php">here.</a>';
         } catch (Exception $e) {
             $message = 'Error: ' . $e->getMessage();
@@ -87,6 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="form-group mb-3">
                     <label>Email address</label>
                     <input type="email" name="email" class="form-control" required>
+                    <small class="form-text text-muted">Your email adress is used as Login ID</small>
                 </div>
                 <!-- Password -->
                 <div class="form-group mb-3">
@@ -96,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
                 <!-- Name -->
                 <div class="form-group mb-3">
-                    <label>Name</label>
+                    <label>Name (Your full name)</label>
                     <input type="text" name="name" class="form-control" required>
                 </div>
                 <!-- Affiliation -->
@@ -106,8 +115,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
                 <!-- Position -->
                 <div class="form-group mb-3">
-                    <label>Position</label>
+                    <label>Position / Occupation</label>
                     <input type="text" name="position" class="form-control" required>
+                    <small class="form-text text-muted"> ex: Professor, Student, Director, Freelancer, etc.</small>
                 </div>
                 <!-- Nationality -->
                 <div class="form-group mb-3">

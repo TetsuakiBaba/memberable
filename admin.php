@@ -28,6 +28,7 @@ try {
         $nationality = $_POST['nationality'];
         $is_admin = isset($_POST['is_admin']) ? 1 : 0;
         $new_password = $_POST['new_password'];
+        $grade = $_POST['grade'];
 
         // パスワード更新フラグとパスワードSQL
         $password_sql = '';
@@ -61,9 +62,10 @@ try {
         // エラーメッセージがない場合に更新を実行
         if (!$message) {
             // ユーザー情報の更新クエリ
-            $sql = "UPDATE users SET member_id = :member_id, name = :name, affiliation = :affiliation, position = :position, nationality = :nationality, is_admin = :is_admin $password_sql WHERE id = :user_id";
+            $sql = "UPDATE users SET member_id = :member_id, grade = :grade, name = :name, affiliation = :affiliation, position = :position, nationality = :nationality, is_admin = :is_admin $password_sql WHERE id = :user_id";
             $stmt = $db->prepare($sql);
             $stmt->bindParam(':member_id', $member_id);
+            $stmt->bindParam(':grade', $grade);
             $stmt->bindParam(':name', $name);
             $stmt->bindParam(':affiliation', $affiliation);
             $stmt->bindParam(':position', $position);
@@ -167,7 +169,8 @@ try {
     </nav>
     <div class="container-fluid">
         <!-- 戻るボタン -->
-        <a class="btn btn-outline-primary mt-3" href="dashboard.php">Back to Dashboard</a>
+        <a class="btn btn-outline-primary mt-3" target="_blank" href="dashboard.php">Back to Dashboard</a>
+        <a class="btn btn-outline-danger mt-3" target="_blank" href="phpliteadmin.php">phpLiteAdmin</a>
         <h5 class="display-5 mt-4 mb-3">Admin Page</h5>
         <?php if ($message): ?>
             <div class="alert alert-info"><?php echo htmlspecialchars($message); ?></div>
@@ -217,6 +220,7 @@ try {
                             <thead>
                                 <tr>
                                     <th>Member ID</th>
+                                    <th>Grade</th>
                                     <th>Email</th>
                                     <th>Name</th>
                                     <th>Affiliation</th>
@@ -233,6 +237,8 @@ try {
                                         <form method="post">
                                             <!-- Member ID -->
                                             <td><input class="form-control" type="text" name="member_id" value="<?php echo htmlspecialchars($user['member_id']); ?>"></td>
+                                            <!-- Grade -->
+                                            <td><input class="form-control" type="text" name="grade" value="<?php echo htmlspecialchars($user['grade']); ?>"></td>
                                             <!-- Email -->
                                             <td><input class="form-control" type="text" value="<?php echo htmlspecialchars($user['email']); ?>" disabled></td>
                                             <!-- Name -->

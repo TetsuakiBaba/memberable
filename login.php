@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['member_id'] = $user['member_id'];
             $_SESSION['affiliation'] = $user['affiliation'];
             $_SESSION['nationality'] = $user['nationality'];
+            $_SESSION['grade'] = $user['grade'];
             header('Location: dashboard.php');
             exit();
         } else {
