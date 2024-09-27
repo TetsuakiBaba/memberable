@@ -1,6 +1,8 @@
 # memberable
 ultra simple user management system, especially for small websites, association, conference, etc. This system is originaly designed for a ADADA International Personal Membership management system. 
 
+![screenshot](teaser.png)
+
 ## Installation
 1. Edit Config.php file with your database settings.
 2. upload all files to your server, except for this README.md file.
