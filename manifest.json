@@ -1,0 +1,21 @@
+{
+    "short_name": "myadada",
+    "name": "myadada",
+    "icons": [
+        {
+            "src": "./images/ADADA_ICON-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "./images/ADADA_ICON-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "version": "1.0.0",
+    "start_url": "dashboard.php",
+    "display": "standalone",
+    "theme_color": "##394C87",
+    "background_color": "##394C87"
+}

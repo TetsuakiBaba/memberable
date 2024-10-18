@@ -50,16 +50,19 @@ if (isset($_GET['token'])) {
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Reset Password</title>
     <!-- BootstrapのCSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./scss/custom.css">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 </head>
 
 <body>
-    <div class="container">
-        <h2 class="mt-5">Reset Password</h2>
+    <div class="container-sm">
+        <img class="mt-5 mb-2" src="<?php echo HEADER_LOGO; ?>" style="width:auto;height:36px;">
+        <h2 class="display-5 mb-4">Reset Password</h2>
+
         <?php if ($message): ?>
             <div class="alert alert-info"><?php echo $message; ?></div>
         <?php endif; ?>
@@ -72,9 +75,16 @@ if (isset($_GET['token'])) {
                     <small class="form-text text-muted">At least 8 characters, including letters, numbers, and symbols.</small>
                 </div>
                 <!-- Submit -->
-                <button type="submit" class="btn btn-primary">Reset Password</button>
+                <div class="d-grid gap-2 col-6 mx-auto mt-4">
+                    <button type="submit" class="btn btn-primary">Reset Password</button>
+                </div>
             </form>
         <?php endif; ?>
+
+        <hr>
+        <footer>
+            <p class="text-center text-muted small"><?php echo FOOTER_TEXT; ?></p>
+        </footer>
     </div>
 </body>
 

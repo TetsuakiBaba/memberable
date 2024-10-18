@@ -1,0 +1,26 @@
+// Import Bootstrap and its default variables
+// This file is used to override Bootstrap's default variables
+// You can add your custom styles here
+//
+// Example:
+// $primary: #f00;
+// $secondary: #0f0;
+//
+
+// Import Bootstrap
+$white: #ffffff;
+
+$theme-colors: (
+    "light": #e7e8e3,
+    "dark": #000000,
+    "primary": #394c87,
+    "secondary": #079a92,
+    "info": #f44c00,
+    "success": #00773f,
+    "warning": #e3cc00,
+    "danger": #d31800,
+);
+
+
+
+@import "../node_modules/bootstrap/scss/bootstrap";

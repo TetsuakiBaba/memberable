@@ -21,12 +21,14 @@ try {
     // ユーザー情報の更新
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_user'])) {
         $user_id = $_POST['user_id'];
+        $member_id = $_POST['member_id'];
         $name = $_POST['name'];
         $affiliation = $_POST['affiliation'];
         $position = $_POST['position'];
         $nationality = $_POST['nationality'];
         $is_admin = isset($_POST['is_admin']) ? 1 : 0;
         $new_password = $_POST['new_password'];
+        $grade = $_POST['grade'];
 
         // パスワード更新フラグとパスワードSQL
         $password_sql = '';
@@ -48,11 +50,22 @@ try {
             }
         }
 
+        // member_idの重複チェック
+        $stmt = $db->prepare("SELECT id FROM users WHERE member_id = ? AND id != ?");
+        $stmt->execute([$member_id, $user_id]);
+        $existing_member = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($existing_member) {
+            $message = 'The Member ID is already in use by another account.';
+        }
+
         // エラーメッセージがない場合に更新を実行
         if (!$message) {
             // ユーザー情報の更新クエリ
-            $sql = "UPDATE users SET name = :name, affiliation = :affiliation, position = :position, nationality = :nationality, is_admin = :is_admin $password_sql WHERE id = :user_id";
+            $sql = "UPDATE users SET member_id = :member_id, grade = :grade, name = :name, affiliation = :affiliation, position = :position, nationality = :nationality, is_admin = :is_admin $password_sql WHERE id = :user_id";
             $stmt = $db->prepare($sql);
+            $stmt->bindParam(':member_id', $member_id);
+            $stmt->bindParam(':grade', $grade);
             $stmt->bindParam(':name', $name);
             $stmt->bindParam(':affiliation', $affiliation);
             $stmt->bindParam(':position', $position);
@@ -127,10 +140,10 @@ try {
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin Page</title>
     <!-- BootstrapのCSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
+    <link href="./scss/custom.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
@@ -141,73 +154,143 @@ try {
 </head>
 
 <body>
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="<?php echo HEADER_LOGO; ?>" alt="Logo" height="36" class="d-inline-block align-text-top">
+            </a>
+            <!-- Logout -->
+            <a href="logout.php">
+                <button class="btn btn-danger">
+                    Logout <i class="bi bi-door-closed"></i>
+                </button>
+            </a>
+        </div>
+    </nav>
     <div class="container-fluid">
-        <h2 class="mt-5">Admin Page</h2>
+        <!-- 戻るボタン -->
+        <a class="btn btn-outline-primary mt-3" target="_blank" href="dashboard.php">Back to Dashboard</a>
+        <a class="btn btn-outline-danger mt-3" target="_blank" href="phpliteadmin.php">phpLiteAdmin</a>
+        <h5 class="display-5 mt-4 mb-3">Admin Page</h5>
         <?php if ($message): ?>
             <div class="alert alert-info"><?php echo htmlspecialchars($message); ?></div>
         <?php endif; ?>
 
-        <!-- ユーザーリストの表示 -->
-        <table class="table table-sm table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Member ID</th>
-                    <th>Email</th>
-                    <th>Name</th>
-                    <th>Affiliation</th>
-                    <th>Position</th>
-                    <th style="width:8rem;">Nationality</th>
-                    <th>Admin</th>
-                    <th>New Password</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody class="table-group-divider">
-                <?php foreach ($users as $user): ?>
-                    <tr>
+        <div class="row">
+            <!-- データのエクスポート -->
+            <div class="col-sm-6 mb-3">
+                <div class="card">
+                    <h5 class="card-header">
+                        Export Data
+                    </h5>
+                    <div class="card-body">
                         <form method="post">
-                            <td><?php echo htmlspecialchars($user['member_id']); ?></td>
-                            <td><?php echo htmlspecialchars($user['email']); ?></td>
-                            <td><input class="form-control" type="text" name="name" value="<?php echo htmlspecialchars($user['name']); ?>"></td>
-                            <td><input class="form-control" type="text" name="affiliation" value="<?php echo htmlspecialchars($user['affiliation']); ?>"></td>
-                            <td><input class="form-control" type="text" name="position" value="<?php echo htmlspecialchars($user['position']); ?>"></td>
-                            <td><input class="form-control" type="text" name="nationality" value="<?php echo htmlspecialchars($user['nationality']); ?>"></td>
-                            <td><input class="form-check-input" type="checkbox" name="is_admin" <?php if ($user['is_admin']) echo 'checked'; ?>></td>
-                            <td><input class="form-control" type="password" name="new_password" class="form-control password-input" placeholder="New Password"></td>
-                            <td>
-                                <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
-                                <button type="submit" name="update_user" class="btn btn-primary btn-sm"><i class="bi bi-floppy"></i></button>
-                                <button type="submit" name="delete_user" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');"><i class="bi bi-trash"></i></button>
-                            </td>
+                            <button type="submit" name="export_data" class="btn btn-success">Export as JSON</button>
                         </form>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-
-        <!-- データのエクスポート -->
-        <h3>Export Data</h3>
-        <form method="post">
-            <button type="submit" name="export_data" class="btn btn-success">Export as JSON</button>
-        </form>
-
-        <!-- データのインポート -->
-        <h3 class="mt-4">Import Data</h3>
-        <form method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label>Import from JSON</label>
-                <input type="file" name="json_file" class="form-control-file" accept=".json" required>
+                    </div>
+                </div>
             </div>
-            <button type="submit" name="import_data" class="btn btn-primary">Import Data</button>
-        </form>
+            <!-- データのインポート -->
+            <div class="col-sm-6 mb-3">
+                <div class="card">
+                    <h5 class="card-header">Import Data</h5>
+                    <div class="card-body">
+                        <form method="post" enctype="multipart/form-data">
+                            <div class="input-group">
+                                <input type="file" name="json_file" class="form-control" accept=".json" required>
 
-        <!-- 戻るボタン -->
-        <p class="mt-3"><a href="dashboard.php">Back to Dashboard</a></p>
+                                <button type="submit" name="import_data" class="btn btn-primary">
+                                    Import Data
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="col-12 mb-3">
+                <div class="card">
+                    <h5 class="card-header"> User Table </h5>
+                    <div class="card-body">
+                        <!-- ユーザーリストの表示 -->
+                        <table class="table table-sm table-striped table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Member ID</th>
+                                    <th>Grade</th>
+                                    <th>Email</th>
+                                    <th>Name</th>
+                                    <th>Affiliation</th>
+                                    <th>Position</th>
+                                    <th>Nationality</th>
+                                    <th>New Password</th>
+                                    <th>Admin</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-group-divider">
+                                <?php
+                                $count_loop = 0;
+                                foreach ($users as $user):
+                                    $count_loop++;
+                                ?>
+
+                                    <tr>
+                                        <form method="post">
+                                            <!-- No. -->
+                                            <td class="text-center"><?php echo htmlspecialchars($count_loop); ?></td>
+
+                                            <!-- Member ID -->
+                                            <td><input class="form-control" type="text" name="member_id" value="<?php echo htmlspecialchars($user['member_id']); ?>"></td>
+                                            <!-- Grade -->
+                                            <td><input class="form-control" type="text" name="grade" value="<?php echo htmlspecialchars($user['grade']); ?>"></td>
+                                            <!-- Email -->
+                                            <td><input class="form-control" type="text" value="<?php echo htmlspecialchars($user['email']); ?>" disabled></td>
+                                            <!-- Name -->
+                                            <td><input class="form-control" type="text" name="name" value="<?php echo htmlspecialchars($user['name']); ?>"></td>
+                                            <!-- Affiliation -->
+                                            <td><input class="form-control" type="text" name="affiliation" value="<?php echo htmlspecialchars($user['affiliation']); ?>"></td>
+                                            <!-- Position -->
+                                            <td><input class="form-control" type="text" name="position" value="<?php echo htmlspecialchars($user['position']); ?>"></td>
+                                            <!-- Nationality -->
+                                            <td><input class="form-control" type="text" name="nationality" value="<?php echo htmlspecialchars($user['nationality']); ?>"></td>
+
+                                            <!-- New Password -->
+                                            <td><input class="form-control password-input" type="password" name="new_password" placeholder="New Password"></td>
+
+                                            <!-- Admin -->
+                                            <td class="text-center"><input class="form-check-input" type="checkbox" name="is_admin" <?php if ($user['is_admin']) echo 'checked'; ?>></td>
+                                            <!-- Actions -->
+                                            <td>
+                                                <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+                                                <button type="submit" name="update_user" class="btn btn-primary btn-sm"><i class="bi bi-floppy"></i></button>
+                                                <button type="submit" name="delete_user" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');"><i class="bi bi-trash"></i></button>
+                                            </td>
+                                        </form>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <hr>
+        <footer>
+            <p class="text-center text-muted small"><?php echo FOOTER_TEXT; ?></p>
+        </footer>
     </div>
 
+    <!-- BootstrapのJS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
+    <script src="https://cdn.jsdelivr.net/gh/TetsuakiBaba/placeholderable@main/placeholderable.js" crossorigin="anonymous" type="text/javascript"></script>
 </body>
 
 </html>

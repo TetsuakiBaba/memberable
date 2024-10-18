@@ -1,1 +1,8 @@
 *.db
+config.php
+node_modules/
+.DS_Store
+.env
+upload.txt
+images/kakuin.png
+images/Certificate-background.png

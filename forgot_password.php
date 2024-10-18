@@ -26,19 +26,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // メールの送信
             $subject = 'Password Reset Request';
-            $message_body = "Click the following link to reset your password:\n\n" . $reset_link;
+            $message_body = "Click the following link to reset your password:　" . $reset_link;
             $headers = 'From: ' . MAIL_FROM;
 
-            if (mail($email, $subject, $message_body, $headers)) {
-                $message = 'Password reset email sent.';
-            } else {
-                $message = 'Failed to send email.';
-            }
+            // if (mail($email, $subject, $message_body, $headers)) {
+            //     $message = 'Password reset link has been sent to ' . $email . '.';
+            // } else {
+            //     $message = 'Failed to send email to ' . $email . '.';
+            // }
+            echo <<<JS
+            <script>
+                document.addEventListener("DOMContentLoaded", async function() {
+                    let ret = await sendMail('ADADA auto mailer', "$email", "$subject", "$message_body", './mailer/mailer.php');
+                    if( ret === 'success' ) {
+                        document.getElementById('message').innerText = 'Password reset link has been sent to $email.';
+                    } else {
+                        document.getElementById('message').innerText = 'Failed to send email to $email.';
+                    }
+                    document.getElementById('message').classList.add(ret === 'success' ? 'alert-success' : 'alert-danger');
+                    document.getElementById('message').hidden = false;
+                });
+            </script>
+            JS;
         } else {
-            $message = 'Email address not found.';
+            echo <<<JS
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    document.getElementById('message').innerText = 'Email address not found.';
+                    document.getElementById('message').classList.add('alert-danger');
+                    document.getElementById('message').hidden = false;
+                });
+            </script>
+            JS;
         }
     } catch (Exception $e) {
-        $message = 'Error: ' . $e->getMessage();
+        echo <<<JS
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                document.getElementById('message').innerText = 'Error: ' + "$e->getMessage()" + '.';
+                document.getElementById('message').hidden = false;
+            });
+        </script>
+        JS;
     }
 }
 ?>
@@ -49,29 +78,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Forgot Password</title>
     <!-- BootstrapのCSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./scss/custom.css">
+
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 
 <body>
-    <div class="container">
-        <h2 class="mt-5">Forgot Password</h2>
-        <?php if ($message): ?>
-            <div class="alert alert-info"><?php echo htmlspecialchars($message); ?></div>
-        <?php endif; ?>
+    <div class="container-sm">
+        <img class="mt-5 mb-2" src="<?php echo HEADER_LOGO; ?>" style="width:auto;height:36px;">
+        <h2 class="display-5 mb-4">
+            Forgot Password?
+        </h2>
+        <div id="message" class="alert alert-info" hidden></div>
         <form method="post">
             <!-- Email -->
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label>Email address</label>
-                <input type="email" name="email" class="form-control" required>
+                <input id="recipientAddress" type="email" name="email" class="form-control" required>
             </div>
             <!-- Submit -->
-            <button type="submit" class="btn btn-primary">Send Reset Link</button>
+            <div class="d-grid gap-2 col-6 mx-auto">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-send-fill"></i> Send Reset Link
+                </button>
+            </div>
         </form>
+
+        <hr>
+        <footer>
+            <p class="text-center text-muted small"><?php echo FOOTER_TEXT; ?></p>
+        </footer>
     </div>
+
+    <input type="hidden" id="senderName" value="ADADA auto mailer">
+    <input type="hidden" id="recipientAddresses" value="<?php echo $email; ?>">
+    <input type="hidden" id="subject" value="Password Reset Request">
+    <input type="hidden" id="message" value="hello">
+
+    <script src="./mailer/SMTPSender.js">
+    </script>
 </body>
 
 </html>
