@@ -6,7 +6,7 @@ ultra simple user management system, especially for small websites, association,
 ## Installation
 1. Create and edit /config.php file according to your env.
 2. Create and edit mailer/config.php file according to your smtp server.
-3. upload *.php, mailer/*, images/* and scss/* to your server.
+3. upload *.php, mailer/*, images/* and scss/* to your server. If you want to customize the boostrap theme, you can edit scss files and compile them to css files (need to install bootstrap by npm command).
 4. open yourdomain.com/initialize_db.php in your browser.
 5. delete initialize_db.php file.
 6. Login with admin username which is written in config.php file.
