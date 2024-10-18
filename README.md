@@ -4,8 +4,8 @@ ultra simple user management system, especially for small websites, association,
 ![screenshot](teaser.png)
 
 ## Installation
-1. Edit config.php file according to your env.
-2. Edit mailer/PHPMailer.php file according to your smtp server.
+1. Create and edit /config.php file according to your env.
+2. Create and edit mailer/config.php file according to your smtp server.
 3. upload *.php, mailer/*, images/* and scss/* to your server.
 4. open yourdomain.com/initialize_db.php in your browser.
 5. delete initialize_db.php file.
